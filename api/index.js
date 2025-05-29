@@ -13,22 +13,24 @@ app.use(express.static('public'))
 
 
 
-const allowedOrigins = [process.env.AllowedOrigin1, process.env.AllowedOrigin2];
-
+// const allowedOrigins = [process.env.AllowedOrigin1, process.env.AllowedOrigin2];
+const allowedOrigins = [
+  "http://localhost:5173", // for local frontend
+  "https://fronted-food-blog-app.vercel.app" // deployed frontend domain
+]
 // CORS configuration
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        } else {
-            console.error(`Blocked by CORS: ${origin}`);
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    methods: ["GET, POST, PUT, DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-    optionSuccessStatus: 200,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("❌ CORS blocked for origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 };
 
 app.use(cors(corsOptions));
